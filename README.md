@@ -1,4 +1,4 @@
-# CamelCase [![GoDoc](https://godoc.org/github.com/fatih/camelcase?status.png)](http://godoc.org/github.com/fatih/camelcase) [![Build Status](https://travis-ci.org/fatih/camelcase.png)](https://travis-ci.org/fatih/camelcase)
+# CamelCase [![GoDoc](http://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](http://godoc.org/github.com/fatih/camelcase) [![Build Status](http://img.shields.io/travis/fatih/camelcase.svg?style=flat-square)](https://travis-ci.org/fatih/camelcase)
 
 CamelCase is a Golang (Go) package to split the words of a camelcase type
 string into a slice of words. It can be used to convert a camelcase word (lower

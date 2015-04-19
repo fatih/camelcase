@@ -1,7 +1,8 @@
 # CamelCase [![GoDoc](https://godoc.org/github.com/fatih/camelcase?status.png)](http://godoc.org/github.com/fatih/camelcase) [![Build Status](https://travis-ci.org/fatih/camelcase.png)](https://travis-ci.org/fatih/camelcase)
 
-CamelCase is a micro package to split the words of a camelcase type string into
-a slice of words. Use it to convert a camelcase into any type of word.
+CamelCase is a Golang (Go) package to split the words of a camelcase type
+string into a slice of words. It can be used to convert a camelcase word (lower
+or upper case) into any type of word.
 
 ## Install
 
@@ -9,17 +10,18 @@ a slice of words. Use it to convert a camelcase into any type of word.
 go get github.com/fatih/camelcase
 ```
 
-## Examples
-
+## Usage and examples
 
 ```go
 splitted := camelcase.Split("GolangPackage")
 
-splitted[0] => "Golang"
-splitted[1] => "Package"
+fmt.Println(splitted[0], splitted[1]) // prints: "Golang", "Package"
 ```
 
-Supported cases:
+Both lower camel case and upper camel case are supported. For more info please
+check: [http://en.wikipedia.org/wiki/CamelCase](http://en.wikipedia.org/wiki/CamelCase)
+
+Below are some example cases:
 
 ```
 lowercase =>       ["lowercase"]

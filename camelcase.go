@@ -5,9 +5,10 @@ package camelcase
 import "unicode"
 
 // Split splits the camelcase word and returns a list of words. It also
-// supports digits.
+// supports digits.  Both lower camel case and upper camel case are supported.
+// For more info please check:  http://en.wikipedia.org/wiki/CamelCase
 //
-// Supported examples:
+// Below are some example cases:
 //   lowercase =>       ["lowercase"]
 //   Class =>           ["Class"]
 //   MyClass =>         ["My", "Class"]

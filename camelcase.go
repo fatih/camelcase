@@ -4,7 +4,7 @@ package camelcase
 
 import "unicode"
 
-// Split splits the camel case word and returns a list of words. It also
+// Split splits the camelcase word and returns a list of words. It also
 // supports digits.
 //
 // Supported examples:

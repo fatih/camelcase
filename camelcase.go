@@ -2,90 +2,89 @@
 // string into a slice of words.
 package camelcase
 
-import "unicode"
+import (
+	"unicode"
+	"unicode/utf8"
+)
 
 // Split splits the camelcase word and returns a list of words. It also
-// supports digits.  Both lower camel case and upper camel case are supported.
-// For more info please check:  http://en.wikipedia.org/wiki/CamelCase
+// supports digits. Both lower camel case and upper camel case are supported.
+// For more info please check: http://en.wikipedia.org/wiki/CamelCase
 //
-// Below are some example cases:
-//   lowercase =>       ["lowercase"]
-//   Class =>           ["Class"]
-//   MyClass =>         ["My", "Class"]
-//   MyC =>             ["My", "C"]
-//   HTML =>            ["HTML"]
-//   PDFLoader =>       ["PDF", "Loader"]
-//   AString =>         ["A", "String"]
-//   SimpleXMLParser => ["Simple", "XML", "Parser"]
-//   vimRPCPlugin =>    ["vim", "RPC", "Plugin"]
-//   GL11Version =>     ["GL", "11", "Version"]
-//   99Bottles =>       ["99", "Bottles"]
-//   May5 =>            ["May", "5"]
-//   BFG9000 =>         ["BFG", "9000"]
-func Split(src string) []string {
-	if src == "" {
-		return []string{}
-	}
-
-	splitIndex := []int{}
-	for i, r := range src {
-		// we don't care about first index
-		if i == 0 {
-			continue
-		}
-
-		// search till we find an upper case
-		if unicode.IsLower(r) {
-			continue
-		}
-
-		prevRune := rune(src[i-1])
-
-		// for cases like: GL11Version, BFG9000
-		if unicode.IsDigit(r) && !unicode.IsDigit(prevRune) {
-			splitIndex = append(splitIndex, i)
-			continue
-		}
-
-		if !unicode.IsDigit(r) && !unicode.IsUpper(prevRune) {
-			// for cases like: MyC
-			if i+1 == len(src) {
-				splitIndex = append(splitIndex, i)
-				continue
-			}
-
-			// for cases like: SimpleXMLParser, eclipseRCPExt
-			if unicode.IsUpper(rune(src[i+1])) {
-				splitIndex = append(splitIndex, i)
-				continue
-			}
-		}
-
-		// If the next char is lower case, we have found a split index
-		if i+1 != len(src) && unicode.IsLower(rune(src[i+1])) {
-			splitIndex = append(splitIndex, i)
-		}
-	}
-
-	// nothing to split, such as "hello", "Class", "HTML"
-	if len(splitIndex) == 0 {
+// Examples
+//
+//   "" =>                     [""]
+//   "lowercase" =>            ["lowercase"]
+//   "Class" =>                ["Class"]
+//   "MyClass" =>              ["My", "Class"]
+//   "MyC" =>                  ["My", "C"]
+//   "HTML" =>                 ["HTML"]
+//   "PDFLoader" =>            ["PDF", "Loader"]
+//   "AString" =>              ["A", "String"]
+//   "SimpleXMLParser" =>      ["Simple", "XML", "Parser"]
+//   "vimRPCPlugin" =>         ["vim", "RPC", "Plugin"]
+//   "GL11Version" =>          ["GL", "11", "Version"]
+//   "99Bottles" =>            ["99", "Bottles"]
+//   "May5" =>                 ["May", "5"]
+//   "BFG9000" =>              ["BFG", "9000"]
+//   "BöseÜberraschung" =>     ["Böse", "Überraschung"]
+//   "Two  spaces" =>          ["Two", "  ", "spaces"]
+//   "BadUTF8\xe2\xe2\xa1" =>  ["BadUTF8\xe2\xe2\xa1"]
+//
+// Splitting rules
+//
+//  1) If string is not valid UTF-8, return it without splitting as
+//     single item array.
+//  2) Assign all unicode characters into one of 4 sets: lower case
+//     letters, upper case letters, numbers, and all other characters.
+//  3) Iterate through characters of string, introducing splits
+//     between adjacent characters that belong to different sets.
+//  4) Iterate through array of split strings, and if a given string
+//     is upper case:
+//       if subsequent string is lower case:
+//         move last character of upper case string to beginning of
+//         lower case string
+func Split(src string) (entries []string) {
+	// don't split invalid utf8
+	if !utf8.ValidString(src) {
 		return []string{src}
 	}
-
-	// now split the input string into pieces
-	splitted := make([]string, len(splitIndex)+1)
-	for i := 0; i < len(splitIndex)+1; i++ {
-		if i == 0 {
-			// first index
-			splitted[i] = src[:splitIndex[0]]
-		} else if i == len(splitIndex) {
-			// last index
-			splitted[i] = src[splitIndex[i-1]:]
+	entries = []string{}
+	var runes [][]rune
+	lastClass := 0
+	class := 0
+	// split into fields based on class of unicode character
+	for _, r := range src {
+		switch true {
+		case unicode.IsLower(r):
+			class = 1
+		case unicode.IsUpper(r):
+			class = 2
+		case unicode.IsDigit(r):
+			class = 3
+		default:
+			class = 4
+		}
+		if class == lastClass {
+			runes[len(runes)-1] = append(runes[len(runes)-1], r)
 		} else {
-			// between first and last index
-			splitted[i] = src[splitIndex[i-1]:splitIndex[i]]
+			runes = append(runes, []rune{r})
+		}
+		lastClass = class
+	}
+	// handle upper case -> lower case sequences, e.g.
+	// "PDFL", "oader" -> "PDF", "Loader"
+	for i := 0; i < len(runes)-1; i++ {
+		if unicode.IsUpper(runes[i][0]) && unicode.IsLower(runes[i+1][0]) {
+			runes[i+1] = append([]rune{runes[i][len(runes[i])-1]}, runes[i+1]...)
+			runes[i] = runes[i][:len(runes[i])-1]
 		}
 	}
-
-	return splitted
+	// construct []string from results
+	for _, s := range runes {
+		if len(s) > 0 {
+			entries = append(entries, string(s))
+		}
+	}
+	return
 }

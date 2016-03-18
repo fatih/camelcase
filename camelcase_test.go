@@ -1,35 +1,47 @@
 package camelcase
 
-import (
-	"reflect"
-	"testing"
-)
+import "fmt"
 
-func TestSplit(t *testing.T) {
-	var testCases = []struct {
-		input  string
-		output []string
-	}{
-		{input: "", output: []string{}},
-		{input: "lowercase", output: []string{"lowercase"}},
-		{input: "Class", output: []string{"Class"}},
-		{input: "MyClass", output: []string{"My", "Class"}},
-		{input: "MyC", output: []string{"My", "C"}},
-		{input: "HTML", output: []string{"HTML"}},
-		{input: "PDFLoader", output: []string{"PDF", "Loader"}},
-		{input: "AString", output: []string{"A", "String"}},
-		{input: "SimpleXMLParser", output: []string{"Simple", "XML", "Parser"}},
-		{input: "vimRPCPlugin", output: []string{"vim", "RPC", "Plugin"}},
-		{input: "GL11Version", output: []string{"GL", "11", "Version"}},
-		{input: "99Bottles", output: []string{"99", "Bottles"}},
-		{input: "May5", output: []string{"May", "5"}},
-		{input: "BFG9000", output: []string{"BFG", "9000"}},
+func ExampleSplit() {
+
+	for _, c := range []string{
+		"",
+		"lowercase",
+		"Class",
+		"MyClass",
+		"MyC",
+		"HTML",
+		"PDFLoader",
+		"AString",
+		"SimpleXMLParser",
+		"vimRPCPlugin",
+		"GL11Version",
+		"99Bottles",
+		"May5",
+		"BFG9000",
+		"BöseÜberraschung",
+		"Two  spaces",
+		"BadUTF8\xe2\xe2\xa1",
+	} {
+		fmt.Printf("%#v => %#v\n", c, Split(c))
 	}
 
-	for _, c := range testCases {
-		res := Split(c.input)
-		if !reflect.DeepEqual(res, c.output) {
-			t.Errorf("input: '%s'\n\twant: %v\n\tgot : %v\n", c.input, c.output, res)
-		}
-	}
+	// Output:
+	// "" => []string{}
+	// "lowercase" => []string{"lowercase"}
+	// "Class" => []string{"Class"}
+	// "MyClass" => []string{"My", "Class"}
+	// "MyC" => []string{"My", "C"}
+	// "HTML" => []string{"HTML"}
+	// "PDFLoader" => []string{"PDF", "Loader"}
+	// "AString" => []string{"A", "String"}
+	// "SimpleXMLParser" => []string{"Simple", "XML", "Parser"}
+	// "vimRPCPlugin" => []string{"vim", "RPC", "Plugin"}
+	// "GL11Version" => []string{"GL", "11", "Version"}
+	// "99Bottles" => []string{"99", "Bottles"}
+	// "May5" => []string{"May", "5"}
+	// "BFG9000" => []string{"BFG", "9000"}
+	// "BöseÜberraschung" => []string{"Böse", "Überraschung"}
+	// "Two  spaces" => []string{"Two", "  ", "spaces"}
+	// "BadUTF8\xe2\xe2\xa1" => []string{"BadUTF8\xe2\xe2\xa1"}
 }

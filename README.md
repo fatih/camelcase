@@ -1,6 +1,6 @@
 # CamelCase [![PkgGoDev](https://pkg.go.dev/badge/github.com/fatih/camelcase)](https://pkg.go.dev/github.com/fatih/camelcase) [![](https://github.com/fatih/camelcase/workflows/build/badge.svg)](https://github.com/fatih/camelcase/actions)
 
-CamelCase is a Golang (Go) package to split the words of a camelcase type
+CamelCase is a Go package to split the words of a camelcase type
 string into a slice of words. It can be used to convert a camelcase word (lower
 or upper case) into any type of word.
 

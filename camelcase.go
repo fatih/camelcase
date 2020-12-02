@@ -72,12 +72,17 @@ func Split(src string) (entries []string) {
 		}
 		lastClass = class
 	}
-	// handle upper case -> lower case sequences, e.g.
+	// handle upper case -> lower case, number --> lower case sequences, e.g.
 	// "PDFL", "oader" -> "PDF", "Loader"
+	// "192", "nd" -> "192nd", ""
 	for i := 0; i < len(runes)-1; i++ {
 		if unicode.IsUpper(runes[i][0]) && unicode.IsLower(runes[i+1][0]) {
 			runes[i+1] = append([]rune{runes[i][len(runes[i])-1]}, runes[i+1]...)
 			runes[i] = runes[i][:len(runes[i])-1]
+		} else if unicode.IsDigit(runes[i][0]) && unicode.IsLower(runes[i+1][0]) {
+			runes[i] = append(runes[i], runes[i+1]...)
+			runes[i+1] = nil
+			i++
 		}
 	}
 	// construct []string from results

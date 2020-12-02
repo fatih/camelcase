@@ -22,6 +22,7 @@ func ExampleSplit() {
 		"BöseÜberraschung",
 		"Two  spaces",
 		"BadUTF8\xe2\xe2\xa1",
+		"192ndDay",
 	} {
 		fmt.Printf("%#v => %#v\n", c, Split(c))
 	}
@@ -44,4 +45,5 @@ func ExampleSplit() {
 	// "BöseÜberraschung" => []string{"Böse", "Überraschung"}
 	// "Two  spaces" => []string{"Two", "  ", "spaces"}
 	// "BadUTF8\xe2\xe2\xa1" => []string{"BadUTF8\xe2\xe2\xa1"}
+	// "192ndDay" => []string{"192nd", "Day"}
 }

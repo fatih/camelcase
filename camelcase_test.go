@@ -1,6 +1,42 @@
 package camelcase
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+	"testing"
+)
+
+func TestSplit(t *testing.T) {
+	tests := []struct {
+		input string
+		want  []string
+	}{
+		{"", []string{}},
+		{"lowercase", []string{"lowercase"}},
+		{"Class", []string{"Class"}},
+		{"MyClass", []string{"My", "Class"}},
+		{"MyC", []string{"My", "C"}},
+		{"HTML", []string{"HTML"}},
+		{"PDFLoader", []string{"PDF", "Loader"}},
+		{"AString", []string{"A", "String"}},
+		{"SimpleXMLParser", []string{"Simple", "XML", "Parser"}},
+		{"vimRPCPlugin", []string{"vim", "RPC", "Plugin"}},
+		{"GL11Version", []string{"GL", "11", "Version"}},
+		{"99Bottles", []string{"99", "Bottles"}},
+		{"May5", []string{"May", "5"}},
+		{"BFG9000", []string{"BFG", "9000"}},
+		{"BöseÜberraschung", []string{"Böse", "Überraschung"}},
+		{"Two  spaces", []string{"Two", "  ", "spaces"}},
+		{"BadUTF8\xe2\xe2\xa1", []string{"BadUTF8\xe2\xe2\xa1"}},
+	}
+
+	for _, tt := range tests {
+		got := Split(tt.input)
+		if !reflect.DeepEqual(got, tt.want) {
+			t.Errorf("Split(%q) = %#v, want %#v", tt.input, got, tt.want)
+		}
+	}
+}
 
 func ExampleSplit() {
 

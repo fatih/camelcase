@@ -13,7 +13,7 @@ import (
 //
 // Examples
 //
-//   "" =>                     [""]
+//   "" =>                     []
 //   "lowercase" =>            ["lowercase"]
 //   "Class" =>                ["Class"]
 //   "MyClass" =>              ["My", "Class"]

@@ -13,7 +13,7 @@ import (
 //
 // Examples
 //
-//   "" =>                     [""]
+//   "" =>                     []
 //   "lowercase" =>            ["lowercase"]
 //   "Class" =>                ["Class"]
 //   "MyClass" =>              ["My", "Class"]
@@ -58,7 +58,7 @@ func Split(src string) (entries []string) {
 		switch true {
 		case unicode.IsLower(r):
 			class = 1
-		case unicode.IsUpper(r):
+		case unicode.IsUpper(r) || unicode.IsTitle(r):
 			class = 2
 		case unicode.IsDigit(r):
 			class = 3
@@ -75,12 +75,13 @@ func Split(src string) (entries []string) {
 	// handle upper case -> lower case sequences, e.g.
 	// "PDFL", "oader" -> "PDF", "Loader"
 	for i := 0; i < len(runes)-1; i++ {
-		if unicode.IsUpper(runes[i][0]) && unicode.IsLower(runes[i+1][0]) {
+		if (unicode.IsUpper(runes[i][0]) || unicode.IsTitle(runes[i][0])) && unicode.IsLower(runes[i+1][0]) {
 			runes[i+1] = append([]rune{runes[i][len(runes[i])-1]}, runes[i+1]...)
 			runes[i] = runes[i][:len(runes[i])-1]
 		}
 	}
 	// construct []string from results
+	entries = make([]string, 0, len(runes))
 	for _, s := range runes {
 		if len(s) > 0 {
 			entries = append(entries, string(s))
